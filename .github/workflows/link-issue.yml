@@ -13,9 +13,10 @@ jobs:
     steps:
       - name: Extract issue number from branch name
         id: extract
+        env:
+          BRANCH: ${{ github.head_ref }}
         run: |
-          BRANCH="${{ github.head_ref }}"
-          ISSUE=$(echo "$BRANCH" | grep -oP 'MKN-\K\d+')
+          ISSUE=$(echo "$BRANCH" | grep -oP 'MKN-\K\d+' || true)
           echo "issue=$ISSUE" >> $GITHUB_OUTPUT
 
       - name: Add Closes reference to PR body
