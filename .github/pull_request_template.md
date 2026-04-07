@@ -18,4 +18,4 @@
 
 ## Related issue
 
-<!-- Auto-filled by link-issue workflow -->
+Closes #
