@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+language: en
+early_access: false
+reviews:
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - "develop"
+      - "main"
+  profile: "chill"
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: false
+  path_filters:
+    - '!**/node_modules/**'
+    - '!**/dist/**'
+  path_instructions:
+    - path: 'src/**/*.{ts,js}'
+      instructions: "Review the TypeScript code for NestJS best practices, dependency injection, module structure, and potential bugs. Ensure adherence to TypeScript's typing system and modern standards."
+    - path: 'src/**/*.spec.ts'
+      instructions: 'Review unit tests ensuring proper NestJS testing techniques (TestingModule, mocks). Check for completeness and coverage.'
+    - path: '**/Dockerfile'
+      instructions: 'Review the Dockerfile for best practices in building and running a NestJS application.'
+    - path: '**/docker-compose*.yml'
+      instructions: 'Review Docker Compose configurations for proper service setup, networking, and environment variable handling.'
+    - path: '**/*.md'
+      instructions: 'Ensure documentation is clear, concise, and up-to-date.'
+chat:
+  auto_reply: true
