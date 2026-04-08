@@ -1,4 +1,4 @@
-# todo-api
+# mikan-api
 
 REST API for a collaborative todo application. Built with NestJS, Prisma, and PostgreSQL. Supports JWT authentication, user-owned todo lists, and anonymous shared rooms accessible via a unique slug.
 
@@ -35,8 +35,8 @@ REST API for a collaborative todo application. Built with NestJS, Prisma, and Po
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/hidetsumi/todo-api.git
-cd todo-api
+git clone https://github.com/hidetsumi/mikan-api.git
+cd mikan-api
 
 # 2. Install dependencies
 pnpm install
@@ -62,7 +62,7 @@ Swagger docs at `http://localhost:3000/api`.
 See `.env.example` for all required variables.
 
 ```env
-DATABASE_URL=postgresql://user:password@localhost:5432/todo
+DATABASE_URL=postgresql://user:password@localhost:5432/mikan
 JWT_ACCESS_SECRET=your_access_secret
 JWT_REFRESH_SECRET=your_refresh_secret
 JWT_ACCESS_EXPIRES_IN=15m
