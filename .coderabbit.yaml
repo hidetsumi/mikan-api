@@ -29,5 +29,7 @@ reviews:
       instructions: 'Review Docker Compose configurations for environment setup, ensuring proper service configuration, network setup, and environment variables handling.'
     - path: '**/*.md'
       instructions: 'Ensure the documentation is clear, concise, and up-to-date, with accurate instructions for running the NestJS application in Docker.'
+  auto_review:
+    base_branches: ['main', 'develop']
 chat:
   auto_reply: true
