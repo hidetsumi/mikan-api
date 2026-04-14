@@ -1,5 +1,6 @@
 # Dependencies
 node_modules/
+.pnpm-store
 
 # Build
 dist/
@@ -23,3 +24,5 @@ pnpm-debug.log*
 # IDE
 .vscode/
 .idea/
+
+/generated/prisma
