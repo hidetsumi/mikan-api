@@ -63,11 +63,30 @@ See `.env.example` for all required variables.
 
 ```env
 DATABASE_URL=postgresql://user:password@localhost:5432/mikan
-JWT_ACCESS_SECRET=your_access_secret
-JWT_REFRESH_SECRET=your_refresh_secret
-JWT_ACCESS_EXPIRES_IN=15m
-JWT_REFRESH_EXPIRES_IN=7d
+JWT_SECRET=super-secret-change-in-production
+JWT_EXPIRES_IN=7d
+NODE_ENV=development
 PORT=3000
+```
+
+## Railway deploy
+
+This repository deploys to Railway using the [`Dockerfile`](./Dockerfile).
+
+Recommended setup in Railway:
+
+1. Create a new project and connect this repository.
+2. Add a PostgreSQL service to the project.
+3. Deploy the API service from this repository.
+4. Add the required environment variables in the Railway dashboard.
+
+Recommended environment variables:
+
+```env
+DATABASE_URL=postgresql://...
+JWT_SECRET=put-a-long-random-secret-here
+JWT_EXPIRES_IN=7d
+NODE_ENV=production
 ```
 
 ## Scripts
