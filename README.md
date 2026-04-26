@@ -104,14 +104,29 @@ pnpm lint            # eslint
 ## Project structure
 
 ```
+prisma/
+├── schema.prisma    # Prisma models, enums, datasource, generator
+└── migrations/      # Database migration history
+
 src/
-├── auth/            # register, login, refresh, JWT strategy, guards
-├── users/           # User entity and service
-├── todos/           # Todo CRUD, pagination, toggle
-├── rooms/           # Room creation, slug access, cron cleanup
-├── prisma/          # PrismaService
+├── modules/
+│   ├── auth/
+│   │   ├── application/     # Use cases and orchestration
+│   │   ├── domain/          # Domain rules and contracts
+│   │   ├── infrastructure/  # Controllers, persistence adapters, guards
+│   │   └── auth.module.ts
+│   ├── users/
+│   ├── todos/
+│   └── rooms/
+├── shared/
+│   ├── infrastructure/
+│   │   └── prisma/          # PrismaModule and PrismaService
+│   └── domain/              # Shared value objects or cross-module contracts
 └── main.ts
 ```
+
+Prisma schema and migrations stay outside `src/` because they define the database, not the Nest application runtime.
+See [docs/architecture.md](./docs/architecture.md) for the intended layering and folder rules.
 
 ## Branch strategy
 
