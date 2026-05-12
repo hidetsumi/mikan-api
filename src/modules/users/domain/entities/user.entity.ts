@@ -1,23 +1,23 @@
 type UserProps = {
   id: string;
   email: string;
-  passwordHash: string;
+  password_hash: string;
   name: string;
-  lastName: string;
+  last_name: string;
 };
 
 export class User {
   public readonly id: string;
   public readonly email: string;
-  public readonly passwordHash: string;
+  public readonly password_hash: string;
   public readonly name: string;
-  public readonly lastName: string;
+  public readonly last_name: string;
 
   constructor(props: UserProps) {
     this.id = props.id;
     this.email = props.email;
-    this.passwordHash = props.passwordHash;
+    this.password_hash = props.password_hash;
     this.name = props.name;
-    this.lastName = props.lastName;
+    this.last_name = props.last_name;
   }
 }

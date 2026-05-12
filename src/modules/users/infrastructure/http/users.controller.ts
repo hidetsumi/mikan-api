@@ -14,7 +14,7 @@ export class UsersController {
 
     return {
       email: user.email,
-      lastName: user.lastName,
+      last_name: user.last_name,
       name: user.name,
       id: user.id,
     };
