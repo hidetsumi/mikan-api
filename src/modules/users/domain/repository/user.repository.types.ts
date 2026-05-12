@@ -1,6 +1,6 @@
 export type CreateUserRepository = {
   email: string;
   name: string;
-  lastName: string;
-  passwordHash: string;
+  last_name: string;
+  password_hash: string;
 };

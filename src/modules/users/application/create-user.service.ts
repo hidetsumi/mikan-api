@@ -21,9 +21,9 @@ export class CreateUserService {
 
     return this.usersRepository.create({
       email: createUserDto.email,
-      lastName: createUserDto.lastName,
+      last_name: createUserDto.last_name,
       name: createUserDto.name,
-      passwordHash: passwordHashed,
+      password_hash: passwordHashed,
     });
   }
 }

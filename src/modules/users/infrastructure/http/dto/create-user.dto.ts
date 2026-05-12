@@ -14,12 +14,12 @@ export class CreateUserDto {
 
   @IsString()
   @MinLength(2)
-  lastName: string;
+  last_name: string;
 }
 
 export class CreateUserResponseDto {
   email: string;
   name: string;
-  lastName: string;
+  last_name: string;
   id: string;
 }
