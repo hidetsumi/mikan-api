@@ -1,0 +1,37 @@
+enum RoomVisibility {
+  public
+  private
+
+  @@map("room_visibility")
+}
+
+enum RoomAccessMode {
+  view_only
+  comment_only
+  edit
+
+  @@map("room_access_mode")
+}
+
+enum RoomStatus {
+  open
+  closed
+
+  @@map("room_status")
+}
+
+model Room {
+  id            String         @id @default(uuid())
+  name          String
+  description   String?
+  owner_user_id String
+  slug          String         @unique
+  visibility    RoomVisibility
+  access_mode   RoomAccessMode
+  status        RoomStatus
+  expiry_date   DateTime?
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+
+  @@map("room")
+}
