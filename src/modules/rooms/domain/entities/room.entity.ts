@@ -5,7 +5,6 @@ type RoomProps = {
   name: string;
   description: string | null;
   owner_user_id: string;
-  slug: string;
   visibility: RoomVisibility;
   access_mode: RoomAccessMode;
   status: RoomStatus;
@@ -17,7 +16,6 @@ export class Room {
   public readonly name: string;
   public readonly description: string | null;
   public readonly owner_user_id: string;
-  public readonly slug: string;
   public readonly visibility: RoomVisibility;
   public readonly access_mode: RoomAccessMode;
   public readonly status: RoomStatus;
@@ -28,7 +26,6 @@ export class Room {
     this.name = props.name;
     this.description = props.description;
     this.owner_user_id = props.owner_user_id;
-    this.slug = props.slug;
     this.visibility = props.visibility;
     this.access_mode = props.access_mode;
     this.status = props.status;

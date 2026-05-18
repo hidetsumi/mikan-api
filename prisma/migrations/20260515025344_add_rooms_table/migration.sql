@@ -13,7 +13,6 @@ CREATE TABLE "room" (
     "name" TEXT NOT NULL,
     "description" TEXT,
     "owner_user_id" TEXT NOT NULL,
-    "slug" TEXT NOT NULL,
     "visibility" "room_visibility" NOT NULL,
     "access_mode" "room_access_mode" NOT NULL,
     "status" "room_status" NOT NULL,
@@ -25,4 +24,3 @@ CREATE TABLE "room" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "room_slug_key" ON "room"("slug");

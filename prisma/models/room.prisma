@@ -25,7 +25,6 @@ model Room {
   name          String
   description   String?
   owner_user_id String
-  slug          String         @unique
   visibility    RoomVisibility
   access_mode   RoomAccessMode
   status        RoomStatus

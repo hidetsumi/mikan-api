@@ -8,27 +8,14 @@ import { CreateRoomDto } from '../infrastructure/http/dto/create-room.dto';
 export class CreateRoomService {
   constructor(private readonly roomRepository: RoomsRepository) {}
 
-  private createSlug(name: string): string {
-    return name
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .toLowerCase()
-      .trim()
-      .replace(/\s+/g, '-')
-      .replace(/[^a-z0-9-]/g, '');
-  }
-
   async execute(
     createRoomDto: CreateRoomDto,
     ownerUserId: string,
   ): Promise<Room> {
-    const slug = this.createSlug(createRoomDto.name);
-
     const roomPayload: CreateRoomRepository = {
       name: createRoomDto.name,
       description: createRoomDto.description ?? null,
       owner_user_id: ownerUserId,
-      slug: slug,
       visibility: createRoomDto.visibility,
       access_mode: createRoomDto.access_mode,
       status: createRoomDto.status,

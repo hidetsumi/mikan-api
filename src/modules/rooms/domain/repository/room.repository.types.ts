@@ -1,8 +1,4 @@
-import {
-  RoomVisibility,
-  RoomAccessMode,
-  RoomStatus,
-} from '../entities/room.entity';
+import { RoomAccessMode, RoomStatus, RoomVisibility } from '@prisma/client';
 
 export type CreateRoomRepository = {
   name: string;
@@ -10,7 +6,6 @@ export type CreateRoomRepository = {
   visibility: RoomVisibility;
   access_mode: RoomAccessMode;
   status: RoomStatus;
-  slug: string;
   owner_user_id: string;
   expiry_date: Date | null;
 };
