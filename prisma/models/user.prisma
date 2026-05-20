@@ -6,15 +6,16 @@ enum UserStatus {
 }
 
 model User {
-  id            String     @id @default(uuid())
-  email         String     @unique
+  id            String         @id @default(uuid())
+  email         String         @unique
   password_hash String
   name          String
   last_name     String
-  status        UserStatus @default(ACTIVE)
+  status        UserStatus     @default(ACTIVE)
   last_login_at DateTime?
-  created_at    DateTime   @default(now())
-  updated_at    DateTime   @updatedAt
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+  refresh_token RefreshToken[]
 
   @@map("user")
 }
