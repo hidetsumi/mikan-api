@@ -1,4 +1,4 @@
-export type CreateUserRepository = {
+export type CreateUserInput = {
   email: string;
   name: string;
   last_name: string;
