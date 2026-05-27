@@ -45,10 +45,10 @@ export class PrismaAuthRepository implements AuthRepository {
     });
   }
 
-  async deleteByToken(token_hash: string): Promise<void> {
+  async deleteByToken(token_hash: string, replaced_by_token_id: string): Promise<void> {
     await this.prismaService.refreshToken.updateMany({
       where: { token_hash },
-      data: { revoked_at: new Date() },
+      data: { revoked_at: new Date(), replaced_by_token_id },
     });
   }
 

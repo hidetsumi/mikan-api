@@ -6,10 +6,7 @@ import { User } from 'src/modules/users/domain/entities/user.entity';
 import { AuthRepository } from '../domain/repository/auth.repository';
 import { LoginInput, LoginOutput } from './types/login.types';
 import { RegisterInput } from './types/register.types';
-import {
-  RefreshTokenInput,
-  RefreshTokenOutput,
-} from './types/refresh-token.types';
+import { RefreshTokenInput, RefreshTokenOutput } from './types/refresh-token.types';
 import { UnauthorizedException } from '@nestjs/common';
 import { TokenService } from '../domain/services/token.services';
 import { hashToken } from 'src/shared/utils/hash';
@@ -25,9 +22,7 @@ export class AuthService {
   ) {}
 
   async register(registerInput: RegisterInput): Promise<User> {
-    const existingUser = await this.usersRepository.findByEmail(
-      registerInput.email,
-    );
+    const existingUser = await this.usersRepository.findByEmail(registerInput.email);
 
     if (existingUser) {
       throw new ConflictException('User with this email already exists');
@@ -48,18 +43,12 @@ export class AuthService {
 
     if (!user) throw new ConflictException('User not found');
 
-    const isPasswordValid = await bcrypt.compare(
-      loginInput.password,
-      user.password_hash,
-    );
+    const isPasswordValid = await bcrypt.compare(loginInput.password, user.password_hash);
 
     if (!isPasswordValid) throw new ConflictException('Invalid password');
 
     const family = randomUUID();
-    const refresh_token = this.tokenService.generateRefreshToken(
-      user.id,
-      family,
-    );
+    const refresh_token = this.tokenService.generateRefreshToken(user.id, family);
     const access_token = this.tokenService.generateAccessToken(user.id);
 
     await this.authRepository.save({
@@ -97,15 +86,10 @@ export class AuthService {
       throw new UnauthorizedException('Refresh token expired');
     }
 
-    await this.authRepository.deleteByToken(token_hash);
-
-    const refresh_token = this.tokenService.generateRefreshToken(
-      input.user_id,
-      input.family,
-    );
+    const refresh_token = this.tokenService.generateRefreshToken(input.user_id, input.family);
     const access_token = this.tokenService.generateAccessToken(input.user_id);
 
-    await this.authRepository.save({
+    const newToken = await this.authRepository.save({
       user_id: input.user_id,
       token_hash: hashToken(refresh_token),
       family: input.family,
@@ -113,6 +97,8 @@ export class AuthService {
       ip_address: input.ip_address,
       user_agent: input.user_agent,
     });
+
+    await this.authRepository.deleteByToken(token_hash, newToken.id);
 
     return { access_token, refresh_token };
   }

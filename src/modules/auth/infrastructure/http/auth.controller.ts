@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Headers,
-  Ip,
-  Post,
-  Req,
-  Res,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Headers, Ip, Post, Req, Res, UseGuards } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { env } from 'src/config/env';
 import { AuthService } from '../../application/auth.service';
@@ -55,9 +46,7 @@ export class AuthController {
   }
 
   @Post('register')
-  async register(
-    @Body() registerDto: RegisterRequestDto,
-  ): Promise<RegisterResponseDto> {
+  async register(@Body() registerDto: RegisterRequestDto): Promise<RegisterResponseDto> {
     const createdUser = await this.authService.register(registerDto);
 
     return {

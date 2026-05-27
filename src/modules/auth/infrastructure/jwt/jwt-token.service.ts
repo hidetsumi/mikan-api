@@ -1,8 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import {
-  TokenService,
-  RefreshTokenPayload,
-} from '../../domain/services/token.services';
+import { TokenService, RefreshTokenPayload } from '../../domain/services/token.services';
 import { JwtService } from '@nestjs/jwt';
 import { env } from 'src/config/env';
 
@@ -23,10 +20,9 @@ export class JwtTokenService implements TokenService {
 
   async verifyRefreshToken(token: string): Promise<RefreshTokenPayload> {
     try {
-      const payload = await this.jwtService.verifyAsync<RefreshTokenPayload>(
-        token,
-        { secret: env.JWT_REFRESH_SECRET },
-      );
+      const payload = await this.jwtService.verifyAsync<RefreshTokenPayload>(token, {
+        secret: env.JWT_REFRESH_SECRET,
+      });
       return payload;
     } catch {
       throw new UnauthorizedException('Invalid refresh token');
