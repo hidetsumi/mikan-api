@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersRepository } from 'src/modules/users/domain/repository/user.repository';
 
 import bcrypt from 'bcryptjs';
@@ -7,7 +7,6 @@ import { AuthRepository } from '../domain/repository/auth.repository';
 import { LoginInput, LoginOutput } from './types/login.types';
 import { RegisterInput } from './types/register.types';
 import { RefreshTokenInput, RefreshTokenOutput } from './types/refresh-token.types';
-import { UnauthorizedException } from '@nestjs/common';
 import { TokenService } from '../domain/services/token.services';
 import { hashToken } from 'src/shared/utils/hash';
 import { randomUUID } from 'node:crypto';
@@ -41,11 +40,11 @@ export class AuthService {
   async login(loginInput: LoginInput): Promise<LoginOutput> {
     const user = await this.usersRepository.findByEmail(loginInput.email);
 
-    if (!user) throw new ConflictException('User not found');
+    if (!user) throw new UnauthorizedException('Invalid credentials');
 
     const isPasswordValid = await bcrypt.compare(loginInput.password, user.password_hash);
 
-    if (!isPasswordValid) throw new ConflictException('Invalid password');
+    if (!isPasswordValid) throw new UnauthorizedException('Invalid credentials');
 
     const family = randomUUID();
     const refresh_token = this.tokenService.generateRefreshToken(user.id, family);
