@@ -1,6 +1,6 @@
-export type CreateUserInput = {
+export type RegisterInput = {
   email: string;
+  password: string;
   name: string;
   last_name: string;
-  password_hash: string;
 };
