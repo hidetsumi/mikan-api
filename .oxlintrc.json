@@ -1,0 +1,7 @@
+{
+  "rules": {
+    "no-explicit-any": "off",
+    "no-floating-promises": "warn",
+    "no-unsafe-argument": "warn"
+  }
+}
