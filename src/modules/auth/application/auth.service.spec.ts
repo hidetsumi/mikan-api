@@ -12,6 +12,7 @@ import { RefreshToken } from '../domain/entities/refresh-token.entity';
 
 describe('AuthService', () => {
   let service: AuthService;
+  let mockUser: User;
 
   const mockUserRepository = {
     findByEmail: jest.fn(),
@@ -31,6 +32,18 @@ describe('AuthService', () => {
     verifyRefreshToken: jest.fn(),
   } as jest.Mocked<TokenService>;
 
+  beforeAll(async () => {
+    const hashedPassword = await bcrypt.hash('pass', 10);
+
+    mockUser = new User({
+      id: 'user-1',
+      email: 'test@test.com',
+      name: 'test',
+      last_name: 'test1',
+      password_hash: hashedPassword,
+    });
+  });
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -48,14 +61,6 @@ describe('AuthService', () => {
     jest.clearAllMocks();
   });
 
-  const mockUser = new User({
-    id: 'user-1',
-    email: 'test@test.com',
-    name: 'test',
-    last_name: 'test1',
-    password_hash: 'pa$$',
-  });
-
   // ─── register ──────────────────────────────────────────────────────────────
 
   describe('register', () => {
@@ -70,14 +75,7 @@ describe('AuthService', () => {
         password: 'pass',
       });
 
-      expect(result).toEqual(
-        expect.objectContaining({
-          id: 'user-1',
-          email: 'test@test.com',
-          name: 'test',
-          last_name: 'test1',
-        }),
-      );
+      expect(result).toEqual(mockUser);
       expect(mockUserRepository.create).toHaveBeenCalledTimes(1);
     });
 
