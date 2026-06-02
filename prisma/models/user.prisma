@@ -15,7 +15,10 @@ model User {
   last_login_at DateTime?
   created_at    DateTime       @default(now())
   updated_at    DateTime       @updatedAt
-  refresh_token RefreshToken[]
+  refresh_token     RefreshToken[]
+  owned_todos       Todo[]         @relation("TodoOwner")
+  created_todos     Todo[]         @relation("TodoCreatedBy")
+  assigned_todos    Todo[]         @relation("TodoAssignedTo")
 
   @@map("user")
 }
