@@ -1,14 +1,4 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { TodoService } from '../../application/todo.service.service';
 import { CreateTodoDto } from './dto/create.dto';
 import { JwtAuthGuard } from 'src/modules/auth/infrastructure/http/guards/jwt-auth.guard';
@@ -44,11 +34,9 @@ export class TodoController {
 
   @Get(':id')
   async findById(@Param('id') id: string) {
-    try {
-      return await this.todoService.findById(id);
-    } catch (err) {
-      throw new BadRequestException(err.message);
-    }
+    // Let the use-case's NotFoundException propagate as a real 404
+    // instead of masking every error as a 400.
+    return this.todoService.findById(id);
   }
 
   @Delete(':id')

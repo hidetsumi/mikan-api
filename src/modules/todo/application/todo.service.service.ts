@@ -3,7 +3,7 @@ import { CreateTodoInput } from './types/create.type';
 import { CreateUseCase } from './use-cases/create.use-case';
 import { FindAllUseCase } from './use-cases/find-all.use-case';
 import { FindByIdUseCase } from './use-cases/find-by-id.use-case';
-import { UpdateTodoInput } from './types/update.type';
+import { UpdateTodoInput } from '../domain/repository/todo.repository.type';
 import { UpdateUseCase } from './use-cases/update.use-case';
 import { DeleteUseCase } from './use-cases/delete.use-case';
 import { FindTodoInput } from './types/find.type';
