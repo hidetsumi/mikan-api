@@ -29,12 +29,10 @@ export class TodoController {
   @Post()
   @UseGuards(JwtAuthGuard)
   async create(@Body() createTodoDto: CreateTodoDto, @CurrentUser() user: JwtUserPayload) {
-    const createdTodo = this.createUseCase.execute({
+    return this.createUseCase.execute({
       ...createTodoDto,
       owner_user_id: user.user_id,
     });
-
-    return createdTodo;
   }
 
   @Patch(':id')
