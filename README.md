@@ -119,7 +119,27 @@ src/
 
 Prisma schema and migrations stay outside `src/` because they define the database, not the Nest application runtime. The schema is split across multiple files under `prisma/models/` rather than a single `schema.prisma`.
 
-See [AGENTS.md](./AGENTS.md) for the full layering rules, SOLID conventions and database design.
+### Layering rules
+
+Each feature module splits into three layers, and the dependency direction is the point:
+
+- **`domain/`** — entities and repository contracts. Pure business concepts, with **no `@nestjs/*` and no `@prisma/client` imports**.
+- **`application/`** — one use case per file, each exposing a single `execute()`. A use case is *one operation*, not one entity: it injects however many repositories that operation needs, from however many modules.
+- **`infrastructure/`** — controllers, DTOs, guards, strategies and the Prisma repository implementations. The framework lives here.
+
+Repository contracts are declared as **abstract classes**, which serve as both the TypeScript contract and the Nest injection token:
+
+```ts
+// domain/repository/todo.repository.ts
+export abstract class TodoRepository { /* ... */ }
+
+// todo.module.ts
+providers: [{ provide: TodoRepository, useClass: PrismaTodoRepository }]
+```
+
+Use cases inject `TodoRepository` and have no idea Prisma exists, and specs mock the contract rather than the ORM. Controllers inject use cases directly — there is no service facade.
+
+Modules grow into this shape rather than starting in it: `users` has only `domain/` and `infrastructure/` because it has no operations of its own, and adding an empty application layer would be ceremony.
 
 ## Branch strategy
 
