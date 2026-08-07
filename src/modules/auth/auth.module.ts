@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './infrastructure/http/auth.controller';
-import { AuthService } from './application/auth.service';
+import { AuthUseCases } from './application/use-cases';
 import { UsersModule } from '../users/users.module';
 import { JwtTokenService } from './infrastructure/jwt/jwt-token.service';
 import { TokenService } from './domain/services/token.services';
@@ -16,7 +16,7 @@ import { env } from 'src/config/env';
 @Module({
   controllers: [AuthController],
   providers: [
-    AuthService,
+    ...AuthUseCases,
     JwtStrategy,
     JwtRefreshStrategy,
     { provide: TokenService, useClass: JwtTokenService },

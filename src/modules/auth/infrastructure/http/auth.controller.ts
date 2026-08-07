@@ -1,7 +1,9 @@
 import { Body, Controller, Headers, Ip, Post, Req, Res, UseGuards } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { env } from 'src/config/env';
-import { AuthService } from '../../application/auth.service';
+import { RegisterUseCase } from '../../application/use-cases/register.use-case';
+import { LoginUseCase } from '../../application/use-cases/login.use-case';
+import { RefreshTokenUseCase } from '../../application/use-cases/refresh-token.use-case';
 import { RegisterRequestDto, RegisterResponseDto } from './dto/register.dto';
 import { LoginRequestDto, LoginResponseDto } from './dto/login.dto';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
@@ -10,7 +12,11 @@ import type { JwtUserPayload } from '../../domain/services/token.services';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly registerUseCase: RegisterUseCase,
+    private readonly loginUseCase: LoginUseCase,
+    private readonly refreshTokenUseCase: RefreshTokenUseCase,
+  ) {}
 
   @Post('login')
   async login(
@@ -19,7 +25,7 @@ export class AuthController {
     @Headers('user-agent') user_agent: string,
     @Res({ passthrough: true }) res: Response,
   ): Promise<LoginResponseDto> {
-    const result = await this.authService.login({
+    const result = await this.loginUseCase.execute({
       email: loginDto.email,
       password: loginDto.password,
       ip_address,
@@ -47,7 +53,7 @@ export class AuthController {
 
   @Post('register')
   async register(@Body() registerDto: RegisterRequestDto): Promise<RegisterResponseDto> {
-    const createdUser = await this.authService.register(registerDto);
+    const createdUser = await this.registerUseCase.execute(registerDto);
 
     return {
       email: createdUser.email,
@@ -66,7 +72,7 @@ export class AuthController {
     @Headers('user-agent') user_agent: string,
     @Ip() ip_address: string,
   ): Promise<void> {
-    const result = await this.authService.refreshToken({
+    const result = await this.refreshTokenUseCase.execute({
       token: req.cookies.refresh_token as string,
       user_id: user.user_id,
       family: user.family,
