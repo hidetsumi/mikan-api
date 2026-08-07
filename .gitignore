@@ -33,3 +33,4 @@ pnpm-debug.log*
 .claude/
 AGENTS.md
 CLAUDE.md
+docs/
