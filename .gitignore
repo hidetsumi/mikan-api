@@ -27,10 +27,9 @@ pnpm-debug.log*
 
 /generated/prisma
 
-# Agent tooling is versioned in THIS repo, overriding the global ignore rules
-# (~/.gitignore_global excludes .claude/ and AGENTS.md everywhere).
-# AGENTS.md is the operational source of truth and .claude/skills/ encodes the
-# project's procedures, so both must travel with the code.
-!.claude/
-!AGENTS.md
-.claude/settings.local.json
+# Agent tooling stays local and is not published with the repo.
+# Listed explicitly rather than relying on ~/.gitignore_global, so the rule
+# holds for any clone.
+.claude/
+AGENTS.md
+CLAUDE.md
