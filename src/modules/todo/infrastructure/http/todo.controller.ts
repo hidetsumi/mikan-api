@@ -1,5 +1,9 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
-import { TodoService } from '../../application/todo.service.service';
+import { CreateUseCase } from '../../application/use-cases/create.use-case';
+import { FindAllUseCase } from '../../application/use-cases/find-all.use-case';
+import { FindByIdUseCase } from '../../application/use-cases/find-by-id.use-case';
+import { UpdateUseCase } from '../../application/use-cases/update.use-case';
+import { DeleteUseCase } from '../../application/use-cases/delete.use-case';
 import { CreateTodoDto } from './dto/create.dto';
 import { JwtAuthGuard } from 'src/modules/auth/infrastructure/http/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/modules/auth/infrastructure/http/decorator/current-user.decorator';
@@ -9,17 +13,23 @@ import { FindTodoDto } from './dto/find.dto';
 
 @Controller('todo')
 export class TodoController {
-  constructor(private readonly todoService: TodoService) {}
+  constructor(
+    private readonly createUseCase: CreateUseCase,
+    private readonly findAllUseCase: FindAllUseCase,
+    private readonly findByIdUseCase: FindByIdUseCase,
+    private readonly updateUseCase: UpdateUseCase,
+    private readonly deleteUseCase: DeleteUseCase,
+  ) {}
 
   @Get()
   async findAll(@Body() findTodoDto: FindTodoDto) {
-    return this.todoService.findAll(findTodoDto);
+    return this.findAllUseCase.execute(findTodoDto);
   }
 
   @Post()
   @UseGuards(JwtAuthGuard)
   async create(@Body() createTodoDto: CreateTodoDto, @CurrentUser() user: JwtUserPayload) {
-    const createdTodo = this.todoService.create({
+    const createdTodo = this.createUseCase.execute({
       ...createTodoDto,
       owner_user_id: user.user_id,
     });
@@ -29,18 +39,18 @@ export class TodoController {
 
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateTodoDto: UpdateTodoDto) {
-    return this.todoService.update({ id, ...updateTodoDto });
+    return this.updateUseCase.execute({ id, ...updateTodoDto });
   }
 
   @Get(':id')
   async findById(@Param('id') id: string) {
     // Let the use-case's NotFoundException propagate as a real 404
     // instead of masking every error as a 400.
-    return this.todoService.findById(id);
+    return this.findByIdUseCase.execute(id);
   }
 
   @Delete(':id')
   async delete(@Param('id') id: string) {
-    return this.todoService.delete(id);
+    return this.deleteUseCase.execute(id);
   }
 }
