@@ -26,3 +26,11 @@ pnpm-debug.log*
 .idea/
 
 /generated/prisma
+
+# Agent tooling stays local and is not published with the repo.
+# Listed explicitly rather than relying on ~/.gitignore_global, so the rule
+# holds for any clone.
+.claude/
+AGENTS.md
+CLAUDE.md
+docs/
