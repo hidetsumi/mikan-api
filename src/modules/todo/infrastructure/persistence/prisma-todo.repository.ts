@@ -9,9 +9,9 @@ import { Injectable } from '@nestjs/common';
 export class PrismaTodoRepository implements TodoRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async findById(id: string): Promise<Todo | null> {
-    const existingTodo = await this.prismaService.todo.findUnique({
-      where: { id },
+  async findById(id: string, owner_user_id: string): Promise<Todo | null> {
+    const existingTodo = await this.prismaService.todo.findFirst({
+      where: { id, owner_user_id },
     });
 
     if (!existingTodo) return null;
@@ -34,24 +34,6 @@ export class PrismaTodoRepository implements TodoRepository {
     });
 
     return new Todo(createdTodo);
-  }
-
-  async findAll({ limit, offset }: PaginationParams): Promise<PaginationResult<Todo[]>> {
-    const [todos, total] = await this.prismaService.$transaction([
-      this.prismaService.todo.findMany({
-        orderBy: { created_at: 'desc' },
-        skip: offset,
-        take: limit,
-      }),
-      this.prismaService.todo.count({
-        where: {},
-      }),
-    ]);
-
-    return {
-      data: todos.map((todo) => new Todo(todo)),
-      total,
-    };
   }
 
   async delete(id: string): Promise<void> {
@@ -92,6 +74,7 @@ export class PrismaTodoRepository implements TodoRepository {
         where: {
           owner_user_id,
         },
+        orderBy: { created_at: 'desc' },
         skip: offset,
         take: limit,
       }),

@@ -1,6 +1,6 @@
 import { FindAllUseCase } from './find-all.use-case';
 import { TodoRepository } from '../../domain/repository/todo.repository';
-import { PaginationParams, PaginationResult } from 'src/shared/domain/pagination';
+import { PaginationResult } from 'src/shared/domain/pagination';
 import { Todo } from '../../domain/entities/todo.entity';
 import { TodoStatus } from '../../domain/entities/todo.entity.types';
 
@@ -25,26 +25,34 @@ const makeTodo = (overrides: Partial<Todo> = {}): Todo =>
 
 describe('FindAllUseCase', () => {
   let useCase: FindAllUseCase;
-  let repository: jest.Mocked<Pick<TodoRepository, 'findAll'>>;
+  let repository: jest.Mocked<Pick<TodoRepository, 'findAllByOwnerUserId'>>;
 
   beforeEach(() => {
     repository = {
-      findAll: jest.fn(),
+      findAllByOwnerUserId: jest.fn(),
     };
     useCase = new FindAllUseCase(repository as unknown as TodoRepository);
   });
 
-  // This use-case is a thin delegator: it must forward params untouched and
-  // return the repository's PaginationResult verbatim.
-  it('delegates to repository.findAll with the params and returns its result', async () => {
-    const params: PaginationParams = { offset: 0, limit: 10 };
+  it('scopes the listing to the owner and forwards only the pagination params', async () => {
     const paginated: PaginationResult<Todo[]> = { data: [makeTodo()], total: 1 };
-    repository.findAll.mockResolvedValue(paginated);
+    repository.findAllByOwnerUserId.mockResolvedValue(paginated);
 
-    const result = await useCase.execute(params);
+    const result = await useCase.execute({ offset: 0, limit: 10, owner_user_id: 'user-1' });
 
-    expect(repository.findAll).toHaveBeenCalledTimes(1);
-    expect(repository.findAll).toHaveBeenCalledWith(params);
+    expect(repository.findAllByOwnerUserId).toHaveBeenCalledTimes(1);
+    expect(repository.findAllByOwnerUserId).toHaveBeenCalledWith('user-1', {
+      offset: 0,
+      limit: 10,
+    });
     expect(result).toBe(paginated);
+  });
+
+  it('never queries without an owner', async () => {
+    repository.findAllByOwnerUserId.mockResolvedValue({ data: [], total: 0 });
+
+    await useCase.execute({ offset: 0, limit: 10, owner_user_id: 'user-2' });
+
+    expect(repository.findAllByOwnerUserId).toHaveBeenCalledWith('user-2', expect.anything());
   });
 });

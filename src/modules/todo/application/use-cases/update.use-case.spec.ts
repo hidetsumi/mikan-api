@@ -46,26 +46,39 @@ describe('UpdateUseCase', () => {
     it('throws NotFoundException and does NOT call update when the todo does not exist', async () => {
       repository.findById.mockResolvedValue(null);
 
-      await expect(useCase.execute(baseInput)).rejects.toThrow(
+      await expect(useCase.execute({ ...baseInput, owner_user_id: 'user-1' })).rejects.toThrow(
         new NotFoundException('Todo not found'),
       );
 
-      expect(repository.findById).toHaveBeenCalledWith('todo-1');
+      expect(repository.findById).toHaveBeenCalledWith('todo-1', 'user-1');
+      expect(repository.update).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('cross-user access', () => {
+    it('does NOT update a todo that belongs to another user', async () => {
+      repository.findById.mockResolvedValue(null);
+
+      await expect(useCase.execute({ ...baseInput, owner_user_id: 'user-2' })).rejects.toThrow(
+        new NotFoundException('Todo not found'),
+      );
+
+      expect(repository.findById).toHaveBeenCalledWith('todo-1', 'user-2');
       expect(repository.update).not.toHaveBeenCalled();
     });
   });
 
   describe('happy path', () => {
-    it('calls repository.update with the input and returns its result when the todo exists', async () => {
+    it('updates and returns the result when the caller owns the todo', async () => {
       // The existing todo must be found first; the updated todo is what the repo returns.
       const existing = makeTodo();
       const updated = makeTodo({ title: 'Buy oat milk' });
       repository.findById.mockResolvedValue(existing);
       repository.update.mockResolvedValue(updated);
 
-      const result = await useCase.execute(baseInput);
+      const result = await useCase.execute({ ...baseInput, owner_user_id: 'user-1' });
 
-      expect(repository.findById).toHaveBeenCalledWith('todo-1');
+      expect(repository.findById).toHaveBeenCalledWith('todo-1', 'user-1');
       expect(repository.update).toHaveBeenCalledTimes(1);
       expect(repository.update).toHaveBeenCalledWith(baseInput);
       expect(result).toBe(updated);
