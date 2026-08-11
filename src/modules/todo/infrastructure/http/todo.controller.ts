@@ -9,6 +9,17 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import {
+  ApiCookieAuth,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { CreateUseCase } from '../../application/use-cases/create.use-case';
 import { FindAllUseCase } from '../../application/use-cases/find-all.use-case';
 import { FindByIdUseCase } from '../../application/use-cases/find-by-id.use-case';
@@ -20,7 +31,11 @@ import { CurrentUser } from 'src/modules/auth/infrastructure/http/decorator/curr
 import type { JwtUserPayload } from 'src/modules/auth/domain/services/token.services';
 import { UpdateTodoDto } from './dto/update.dto';
 import { FindTodoDto } from './dto/find.dto';
+import { PaginatedTodoResponseDto, TodoResponseDto } from './dto/todo-response.dto';
 
+@ApiTags('todo')
+@ApiCookieAuth('access_token')
+@ApiUnauthorizedResponse({ description: 'Missing or invalid access_token cookie.' })
 @Controller('todo')
 @UseGuards(JwtAuthGuard)
 export class TodoController {
@@ -33,6 +48,11 @@ export class TodoController {
   ) {}
 
   @Get()
+  @ApiOperation({
+    summary: "List the authenticated user's todos",
+    description: 'Returns only todos owned by the caller, newest first.',
+  })
+  @ApiOkResponse({ type: PaginatedTodoResponseDto })
   async findAll(@Query() findTodoDto: FindTodoDto, @CurrentUser() user: JwtUserPayload) {
     return this.findAllUseCase.execute({
       ...findTodoDto,
@@ -41,6 +61,11 @@ export class TodoController {
   }
 
   @Post()
+  @ApiOperation({
+    summary: 'Create a todo',
+    description: 'The todo is owned by the authenticated user.',
+  })
+  @ApiCreatedResponse({ type: TodoResponseDto })
   async create(@Body() createTodoDto: CreateTodoDto, @CurrentUser() user: JwtUserPayload) {
     return this.createUseCase.execute({
       ...createTodoDto,
@@ -49,6 +74,10 @@ export class TodoController {
   }
 
   @Patch(':id')
+  @ApiOperation({ summary: 'Update a todo the caller owns' })
+  @ApiParam({ name: 'id', format: 'uuid' })
+  @ApiOkResponse({ type: TodoResponseDto })
+  @ApiNotFoundResponse({ description: 'No such todo, or it belongs to another user.' })
   async update(
     @Param('id') id: string,
     @Body() updateTodoDto: UpdateTodoDto,
@@ -62,6 +91,10 @@ export class TodoController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get a todo the caller owns' })
+  @ApiParam({ name: 'id', format: 'uuid' })
+  @ApiOkResponse({ type: TodoResponseDto })
+  @ApiNotFoundResponse({ description: 'No such todo, or it belongs to another user.' })
   async findById(@Param('id') id: string, @CurrentUser() user: JwtUserPayload) {
     // Let the use-case's NotFoundException propagate as a real 404
     // instead of masking every error as a 400.
@@ -69,6 +102,10 @@ export class TodoController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete a todo the caller owns' })
+  @ApiParam({ name: 'id', format: 'uuid' })
+  @ApiNoContentResponse({ description: 'Deleted. The response body is empty.' })
+  @ApiNotFoundResponse({ description: 'No such todo, or it belongs to another user.' })
   async delete(@Param('id') id: string, @CurrentUser() user: JwtUserPayload) {
     return this.deleteUseCase.execute(id, user.user_id);
   }
