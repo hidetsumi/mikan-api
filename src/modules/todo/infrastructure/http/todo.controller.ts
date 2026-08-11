@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { CreateUseCase } from '../../application/use-cases/create.use-case';
 import { FindAllUseCase } from '../../application/use-cases/find-all.use-case';
 import { FindByIdUseCase } from '../../application/use-cases/find-by-id.use-case';
@@ -23,7 +33,7 @@ export class TodoController {
   ) {}
 
   @Get()
-  async findAll(@Body() findTodoDto: FindTodoDto, @CurrentUser() user: JwtUserPayload) {
+  async findAll(@Query() findTodoDto: FindTodoDto, @CurrentUser() user: JwtUserPayload) {
     return this.findAllUseCase.execute({
       ...findTodoDto,
       owner_user_id: user.user_id,
