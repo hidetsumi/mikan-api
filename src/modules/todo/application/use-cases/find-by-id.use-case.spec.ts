@@ -38,22 +38,34 @@ describe('FindByIdUseCase', () => {
     it('throws NotFoundException when the repository returns null', async () => {
       repository.findById.mockResolvedValue(null);
 
-      await expect(useCase.execute('missing-id')).rejects.toThrow(
+      await expect(useCase.execute('missing-id', 'user-1')).rejects.toThrow(
         new NotFoundException('Todo not found'),
       );
 
-      expect(repository.findById).toHaveBeenCalledWith('missing-id');
+      expect(repository.findById).toHaveBeenCalledWith('missing-id', 'user-1');
+    });
+  });
+
+  describe('cross-user access', () => {
+    it('throws NotFoundException when the todo belongs to another user', async () => {
+      repository.findById.mockResolvedValue(null);
+
+      await expect(useCase.execute('todo-1', 'user-2')).rejects.toThrow(
+        new NotFoundException('Todo not found'),
+      );
+
+      expect(repository.findById).toHaveBeenCalledWith('todo-1', 'user-2');
     });
   });
 
   describe('happy path', () => {
-    it('returns the todo when the repository finds one', async () => {
+    it('returns the todo when the caller owns it', async () => {
       const todo = makeTodo();
       repository.findById.mockResolvedValue(todo);
 
-      const result = await useCase.execute('todo-1');
+      const result = await useCase.execute('todo-1', 'user-1');
 
-      expect(repository.findById).toHaveBeenCalledWith('todo-1');
+      expect(repository.findById).toHaveBeenCalledWith('todo-1', 'user-1');
       expect(result).toBe(todo);
     });
   });

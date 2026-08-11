@@ -39,23 +39,36 @@ describe('DeleteUseCase', () => {
     it('throws NotFoundException and does NOT call delete when the todo does not exist', async () => {
       repository.findById.mockResolvedValue(null);
 
-      await expect(useCase.execute('missing-id')).rejects.toThrow(
+      await expect(useCase.execute('missing-id', 'user-1')).rejects.toThrow(
         new NotFoundException('Todo not found'),
       );
 
-      expect(repository.findById).toHaveBeenCalledWith('missing-id');
+      expect(repository.findById).toHaveBeenCalledWith('missing-id', 'user-1');
+      expect(repository.delete).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('cross-user access', () => {
+    it('does NOT delete a todo that belongs to another user', async () => {
+      repository.findById.mockResolvedValue(null);
+
+      await expect(useCase.execute('todo-1', 'user-2')).rejects.toThrow(
+        new NotFoundException('Todo not found'),
+      );
+
+      expect(repository.findById).toHaveBeenCalledWith('todo-1', 'user-2');
       expect(repository.delete).not.toHaveBeenCalled();
     });
   });
 
   describe('happy path', () => {
-    it('calls repository.delete with the id when the todo exists', async () => {
+    it('calls repository.delete with the id when the caller owns the todo', async () => {
       repository.findById.mockResolvedValue(makeTodo());
       repository.delete.mockResolvedValue(undefined);
 
-      await expect(useCase.execute('todo-1')).resolves.toBeUndefined();
+      await expect(useCase.execute('todo-1', 'user-1')).resolves.toBeUndefined();
 
-      expect(repository.findById).toHaveBeenCalledWith('todo-1');
+      expect(repository.findById).toHaveBeenCalledWith('todo-1', 'user-1');
       expect(repository.delete).toHaveBeenCalledTimes(1);
       expect(repository.delete).toHaveBeenCalledWith('todo-1');
     });

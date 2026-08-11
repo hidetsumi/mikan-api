@@ -12,6 +12,7 @@ import { UpdateTodoDto } from './dto/update.dto';
 import { FindTodoDto } from './dto/find.dto';
 
 @Controller('todo')
+@UseGuards(JwtAuthGuard)
 export class TodoController {
   constructor(
     private readonly createUseCase: CreateUseCase,
@@ -22,12 +23,14 @@ export class TodoController {
   ) {}
 
   @Get()
-  async findAll(@Body() findTodoDto: FindTodoDto) {
-    return this.findAllUseCase.execute(findTodoDto);
+  async findAll(@Body() findTodoDto: FindTodoDto, @CurrentUser() user: JwtUserPayload) {
+    return this.findAllUseCase.execute({
+      ...findTodoDto,
+      owner_user_id: user.user_id,
+    });
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard)
   async create(@Body() createTodoDto: CreateTodoDto, @CurrentUser() user: JwtUserPayload) {
     return this.createUseCase.execute({
       ...createTodoDto,
@@ -36,19 +39,27 @@ export class TodoController {
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateTodoDto: UpdateTodoDto) {
-    return this.updateUseCase.execute({ id, ...updateTodoDto });
+  async update(
+    @Param('id') id: string,
+    @Body() updateTodoDto: UpdateTodoDto,
+    @CurrentUser() user: JwtUserPayload,
+  ) {
+    return this.updateUseCase.execute({
+      id,
+      ...updateTodoDto,
+      owner_user_id: user.user_id,
+    });
   }
 
   @Get(':id')
-  async findById(@Param('id') id: string) {
+  async findById(@Param('id') id: string, @CurrentUser() user: JwtUserPayload) {
     // Let the use-case's NotFoundException propagate as a real 404
     // instead of masking every error as a 400.
-    return this.findByIdUseCase.execute(id);
+    return this.findByIdUseCase.execute(id, user.user_id);
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: string) {
-    return this.deleteUseCase.execute(id);
+  async delete(@Param('id') id: string, @CurrentUser() user: JwtUserPayload) {
+    return this.deleteUseCase.execute(id, user.user_id);
   }
 }
