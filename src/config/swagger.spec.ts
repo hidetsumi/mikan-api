@@ -1,7 +1,10 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
+import { HTTP_CODE_METADATA } from '@nestjs/common/constants';
 import { AppModule } from '../app.module';
+import { AuthController } from '../modules/auth/infrastructure/http/auth.controller';
+import { TodoController } from '../modules/todo/infrastructure/http/todo.controller';
 import { PrismaService } from '../shared/infrastructure/prisma/prisma.service';
 import { buildSwaggerConfig } from './swagger';
 
@@ -54,6 +57,77 @@ describe('OpenAPI document', () => {
 
     expect(props?.password).toMatchObject({ minLength: 8 });
     expect(props?.email).toMatchObject({ format: 'email' });
+  });
+
+  // Nest always emits a `summary` key, empty when @ApiOperation omits it,
+  // so the check has to be on the value rather than on the key.
+  it('gives every operation a non-empty summary', () => {
+    const missing = Object.entries(document.paths).flatMap(([path, item]) =>
+      Object.entries(item)
+        .filter(([, op]) => typeof op === 'object' && 'summary' in op && !op.summary)
+        .map(([method]) => `${method.toUpperCase()} ${path}`),
+    );
+
+    expect(missing).toEqual([]);
+  });
+
+  // The documented `responses` come straight from the @ApiXResponse decorators, so they
+  // cannot prove what the route returns. @HttpCode is the runtime source of truth, and
+  // this is the only place the two can be compared without booting a database.
+  it('backs the documented status codes with a matching @HttpCode', () => {
+    const cases = [
+      { controller: TodoController, handler: 'delete', documented: '204' },
+      { controller: AuthController, handler: 'login', documented: '200' },
+      { controller: AuthController, handler: 'refresh', documented: '200' },
+    ] as const;
+
+    for (const { controller, handler, documented } of cases) {
+      const httpCode: unknown = Reflect.getMetadata(
+        HTTP_CODE_METADATA,
+        controller.prototype[handler],
+      );
+
+      expect({ handler, httpCode }).toEqual({ handler, httpCode: Number(documented) });
+    }
+
+    expect(Object.keys(document.paths['/todo/{id}']?.delete?.responses ?? {})).toContain('204');
+    for (const path of ['/auth/login', '/auth/refresh']) {
+      expect(Object.keys(document.paths[path]?.post?.responses ?? {})).toContain('200');
+    }
+  });
+
+  it('gives every scalar schema property an example', () => {
+    const missing = Object.entries(document.components?.schemas ?? {}).flatMap(([name, schema]) =>
+      Object.entries('properties' in schema ? (schema.properties ?? {}) : {})
+        .filter(([, prop]) => !('$ref' in prop) && prop.type !== 'array' && !('example' in prop))
+        .map(([prop]) => `${name}.${prop}`),
+    );
+
+    expect(missing).toEqual([]);
+  });
+
+  // Query DTOs are flattened into `parameters` and never reach components.schemas,
+  // so the check above cannot see them.
+  it('gives every query parameter an example', () => {
+    const missing = Object.entries(document.paths).flatMap(([path, item]) =>
+      Object.entries(item).flatMap(([method, op]) =>
+        (typeof op === 'object' && 'parameters' in op ? (op.parameters ?? []) : [])
+          .filter(
+            (p) =>
+              'in' in p &&
+              p.in === 'query' &&
+              !('example' in p) &&
+              !(p.schema && 'example' in p.schema),
+          )
+          .map((p) => `${method.toUpperCase()} ${path} ?${'name' in p ? p.name : ''}`),
+      ),
+    );
+
+    expect(missing).toEqual([]);
+  });
+
+  it('leaves no unused DTO in the document', () => {
+    expect(document.components?.schemas).not.toHaveProperty('RefreshTokenRequestDto');
   });
 
   it('exposes the todo filters as query params, not as a body', () => {
