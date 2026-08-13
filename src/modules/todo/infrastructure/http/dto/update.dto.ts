@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsDate, IsEnum, IsInt, IsOptional, IsString, Min } from 'class-validator';
+import { IsDate, IsEnum, IsInt, IsOptional, IsString, IsUUID, Min } from 'class-validator';
 import { TodoStatus } from 'src/modules/todo/domain/entities/todo.entity.types';
 
 export class UpdateTodoDto {
@@ -19,18 +19,17 @@ export class UpdateTodoDto {
   @IsEnum(TodoStatus)
   status?: TodoStatus;
 
-  @ApiPropertyOptional({ format: 'uuid' })
   @IsOptional()
-  @IsString()
+  @IsUUID()
   assigned_user_id?: string;
 
-  @ApiPropertyOptional({ minimum: 0, description: 'Higher means more important.' })
+  @ApiPropertyOptional({ description: 'Higher means more important.' })
   @IsOptional()
   @IsInt()
   @Min(0)
   priority?: number;
 
-  @ApiPropertyOptional({ format: 'date-time', example: '2026-09-01T10:00:00.000Z' })
+  @ApiPropertyOptional({ example: '2026-09-01T10:00:00.000Z' })
   @IsOptional()
   @Type(() => Date)
   @IsDate()

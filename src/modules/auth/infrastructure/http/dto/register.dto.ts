@@ -8,19 +8,18 @@ export class RegisterRequestDto {
 
   @ApiProperty({
     example: 'correct-horse-battery',
-    minLength: 8,
     description: 'Plain password, hashed before it is stored.',
   })
   @IsString()
   @MinLength(8)
   password: string;
 
-  @ApiProperty({ example: 'Ada', minLength: 2 })
+  @ApiProperty({ example: 'Ada' })
   @IsString()
   @MinLength(2)
   name: string;
 
-  @ApiProperty({ example: 'Lovelace', minLength: 2 })
+  @ApiProperty({ example: 'Lovelace' })
   @IsString()
   @MinLength(2)
   last_name: string;

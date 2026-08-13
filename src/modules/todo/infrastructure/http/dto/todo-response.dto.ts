@@ -8,7 +8,7 @@ export class TodoResponseDto {
   @ApiProperty({ example: 'Buy milk' })
   title: string;
 
-  @ApiProperty({ nullable: true, example: 'Oat, not cow.' })
+  @ApiProperty({ example: 'Oat, not cow.' })
   description: string | null;
 
   @ApiProperty({ enum: TodoStatus })
@@ -17,28 +17,24 @@ export class TodoResponseDto {
   @ApiProperty({ example: 0 })
   priority: number;
 
-  @ApiProperty({ format: 'uuid', nullable: true })
+  @ApiProperty({ format: 'uuid' })
   owner_user_id: string | null;
 
-  @ApiProperty({ format: 'uuid', nullable: true, description: 'Reserved for rooms (v0.4.0).' })
+  @ApiProperty({ format: 'uuid', description: 'Reserved for rooms (v0.4.0).' })
   room_id: string | null;
 
-  @ApiProperty({ format: 'uuid', nullable: true, description: 'Reserved for rooms (v0.4.0).' })
+  @ApiProperty({ format: 'uuid', description: 'Reserved for rooms (v0.4.0).' })
   owner_guest_id: string | null;
 
-  @ApiProperty({ format: 'uuid', nullable: true })
+  @ApiProperty({ format: 'uuid' })
   assigned_user_id: string | null;
 
-  @ApiProperty({ format: 'date-time', nullable: true })
   due_at: Date | null;
 
-  @ApiProperty({ format: 'date-time', nullable: true })
   completed_at: Date | null;
 
-  @ApiProperty({ format: 'date-time' })
   created_at: Date;
 
-  @ApiProperty({ format: 'date-time' })
   updated_at: Date;
 }
 

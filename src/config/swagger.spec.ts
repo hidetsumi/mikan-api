@@ -49,6 +49,13 @@ describe('OpenAPI document', () => {
     }
   });
 
+  it('infers DTO metadata from the CLI plugin', () => {
+    const props = document.components?.schemas?.RegisterRequestDto?.properties;
+
+    expect(props?.password).toMatchObject({ minLength: 8 });
+    expect(props?.email).toMatchObject({ format: 'email' });
+  });
+
   it('exposes the todo filters as query params, not as a body', () => {
     const list = document.paths['/todo']?.get;
 
