@@ -3,13 +3,17 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBadRequestResponse,
   ApiCookieAuth,
   ApiCreatedResponse,
   ApiNoContentResponse,
@@ -53,6 +57,7 @@ export class TodoController {
     description: 'Returns only todos owned by the caller, newest first.',
   })
   @ApiOkResponse({ type: PaginatedTodoResponseDto })
+  @ApiBadRequestResponse({ description: 'Validation failed.' })
   async findAll(@Query() findTodoDto: FindTodoDto, @CurrentUser() user: JwtUserPayload) {
     return this.findAllUseCase.execute({
       ...findTodoDto,
@@ -66,6 +71,7 @@ export class TodoController {
     description: 'The todo is owned by the authenticated user.',
   })
   @ApiCreatedResponse({ type: TodoResponseDto })
+  @ApiBadRequestResponse({ description: 'Validation failed.' })
   async create(@Body() createTodoDto: CreateTodoDto, @CurrentUser() user: JwtUserPayload) {
     return this.createUseCase.execute({
       ...createTodoDto,
@@ -78,8 +84,9 @@ export class TodoController {
   @ApiParam({ name: 'id', format: 'uuid' })
   @ApiOkResponse({ type: TodoResponseDto })
   @ApiNotFoundResponse({ description: 'No such todo, or it belongs to another user.' })
+  @ApiBadRequestResponse({ description: 'Validation failed, or the id is not a valid UUID.' })
   async update(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateTodoDto: UpdateTodoDto,
     @CurrentUser() user: JwtUserPayload,
   ) {
@@ -95,18 +102,21 @@ export class TodoController {
   @ApiParam({ name: 'id', format: 'uuid' })
   @ApiOkResponse({ type: TodoResponseDto })
   @ApiNotFoundResponse({ description: 'No such todo, or it belongs to another user.' })
-  async findById(@Param('id') id: string, @CurrentUser() user: JwtUserPayload) {
+  @ApiBadRequestResponse({ description: 'The id is not a valid UUID.' })
+  async findById(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: JwtUserPayload) {
     // Let the use-case's NotFoundException propagate as a real 404
     // instead of masking every error as a 400.
     return this.findByIdUseCase.execute(id, user.user_id);
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete a todo the caller owns' })
   @ApiParam({ name: 'id', format: 'uuid' })
   @ApiNoContentResponse({ description: 'Deleted. The response body is empty.' })
   @ApiNotFoundResponse({ description: 'No such todo, or it belongs to another user.' })
-  async delete(@Param('id') id: string, @CurrentUser() user: JwtUserPayload) {
+  @ApiBadRequestResponse({ description: 'The id is not a valid UUID.' })
+  async delete(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: JwtUserPayload) {
     return this.deleteUseCase.execute(id, user.user_id);
   }
 }

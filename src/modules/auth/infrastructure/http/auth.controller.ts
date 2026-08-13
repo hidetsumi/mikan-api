@@ -1,4 +1,15 @@
-import { Body, Controller, Headers, Ip, Post, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Headers,
+  HttpCode,
+  HttpStatus,
+  Ip,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { env } from 'src/config/env';
 import { RegisterUseCase } from '../../application/use-cases/register.use-case';
@@ -29,6 +40,7 @@ export class AuthController {
   ) {}
 
   @Post('login')
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Log in',
     description:
@@ -89,6 +101,7 @@ export class AuthController {
   }
 
   @Post('refresh')
+  @HttpCode(HttpStatus.OK)
   @ApiCookieAuth('refresh_token')
   @ApiOperation({
     summary: 'Rotate the token pair',
