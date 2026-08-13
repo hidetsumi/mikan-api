@@ -19,6 +19,7 @@ export class UpdateTodoDto {
   @IsEnum(TodoStatus)
   status?: TodoStatus;
 
+  @ApiPropertyOptional({ description: 'User the todo is assigned to.' })
   @IsOptional()
   @IsUUID()
   assigned_user_id?: string;
