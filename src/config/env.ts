@@ -6,5 +6,4 @@ export const env = {
   JWT_ACCESS_EXPIRES_IN: 900,
   JWT_REFRESH_EXPIRES_IN: 604800,
   NODE_ENV: process.env.NODE_ENV ?? 'development',
-  SWAGGER_ENABLED: process.env.SWAGGER_ENABLED === 'true',
 };

@@ -1,6 +1,5 @@
 import { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { env } from './env';
 
 export const SWAGGER_PATH = 'docs';
 
@@ -44,8 +43,4 @@ export function setupSwagger(app: INestApplication): void {
   SwaggerModule.setup(SWAGGER_PATH, app, document, {
     swaggerOptions: { persistAuthorization: true },
   });
-}
-
-export function isSwaggerEnabled(): boolean {
-  return env.NODE_ENV !== 'production' || env.SWAGGER_ENABLED;
 }
