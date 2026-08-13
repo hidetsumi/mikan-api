@@ -32,6 +32,7 @@ export function buildSwaggerConfig() {
       },
       'refresh_token',
     )
+    .addTag('health', 'Liveness')
     .addTag('auth', 'Registration, login and refresh token rotation')
     .addTag('todo', 'Todo CRUD, scoped to the authenticated user')
     .build();

@@ -14,17 +14,20 @@ export class UpdateTodoDto {
   @IsString()
   description?: string;
 
-  @ApiPropertyOptional({ enum: TodoStatus })
+  @ApiPropertyOptional({ enum: TodoStatus, example: TodoStatus.COMPLETED })
   @IsOptional()
   @IsEnum(TodoStatus)
   status?: TodoStatus;
 
-  @ApiPropertyOptional({ description: 'User the todo is assigned to.' })
+  @ApiPropertyOptional({
+    example: '3f1c5a2e-9b7d-4f6a-8c21-0d4e7b9a1f52',
+    description: 'User the todo is assigned to.',
+  })
   @IsOptional()
   @IsUUID()
   assigned_user_id?: string;
 
-  @ApiPropertyOptional({ description: 'Higher means more important.' })
+  @ApiPropertyOptional({ example: 0, description: 'Higher means more important.' })
   @IsOptional()
   @IsInt()
   @Min(0)

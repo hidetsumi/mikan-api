@@ -20,10 +20,10 @@ export class TodoResponseDto {
   @ApiProperty({ format: 'uuid', example: '3f1c5a2e-9b7d-4f6a-8c21-0d4e7b9a1f52' })
   owner_user_id: string | null;
 
-  @ApiProperty({ format: 'uuid', description: 'Reserved for rooms (v0.4.0).' })
+  @ApiProperty({ format: 'uuid', example: null, description: 'Reserved for rooms (v0.4.0).' })
   room_id: string | null;
 
-  @ApiProperty({ format: 'uuid', description: 'Reserved for rooms (v0.4.0).' })
+  @ApiProperty({ format: 'uuid', example: null, description: 'Reserved for rooms (v0.4.0).' })
   owner_guest_id: string | null;
 
   @ApiProperty({ format: 'uuid', example: '3f1c5a2e-9b7d-4f6a-8c21-0d4e7b9a1f52' })
