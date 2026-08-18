@@ -23,9 +23,6 @@ import type { JwtUserPayload } from '../../domain/services/token.services';
 import {
   ApiBadRequestResponse,
   ApiCookieAuth,
-  ApiCreatedResponse,
-  ApiOkResponse,
-  ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -41,13 +38,6 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({
-    summary: 'Log in',
-    description:
-      'On success, sets the httpOnly `access_token` and `refresh_token` cookies. ' +
-      'The tokens are never returned in the response body, which carries only the user.',
-  })
-  @ApiOkResponse({ type: LoginResponseDto })
   @ApiUnauthorizedResponse({ description: 'Unknown email or wrong password.' })
   @ApiBadRequestResponse({ description: 'Validation failed.' })
   async login(
@@ -83,11 +73,6 @@ export class AuthController {
   }
 
   @Post('register')
-  @ApiOperation({
-    summary: 'Register a new user',
-    description: 'Does not log the user in: no cookies are set. Call POST /auth/login next.',
-  })
-  @ApiCreatedResponse({ type: RegisterResponseDto })
   @ApiBadRequestResponse({ description: 'Validation failed, or the email is already taken.' })
   async register(@Body() registerDto: RegisterRequestDto): Promise<RegisterResponseDto> {
     const createdUser = await this.registerUseCase.execute(registerDto);
@@ -103,13 +88,6 @@ export class AuthController {
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   @ApiCookieAuth('refresh_token')
-  @ApiOperation({
-    summary: 'Rotate the token pair',
-    description:
-      'Reads `refresh_token` from the cookie and replaces both cookies with a new pair. ' +
-      'Returns an empty body. Reusing a spent token revokes its whole family.',
-  })
-  @ApiOkResponse({ description: 'Cookies rotated. The response body is empty.' })
   @ApiUnauthorizedResponse({ description: 'Missing, expired, revoked or already-used token.' })
   @UseGuards(JwtRefreshGuard)
   async refresh(
