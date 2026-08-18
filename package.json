@@ -21,7 +21,9 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prepare": "husky",
     "db:up": "docker compose -f docker-compose.dev.yml up -d",
-    "db:down": "docker compose -f docker-compose.dev.yml down"
+    "db:down": "docker compose -f docker-compose.dev.yml down",
+    "swagger:check": "node scripts/check-openapi.js",
+    "swagger:snapshot": "node scripts/check-openapi.js --write"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
@@ -102,6 +104,9 @@
     "*.{ts,js}": [
       "oxlint --fix --max-warnings=0",
       "oxfmt"
+    ],
+    "src/**/*.{controller,dto}.ts": [
+      "bash -c \"pnpm swagger:check\""
     ]
   }
 }
