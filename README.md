@@ -89,8 +89,6 @@ pnpm lint:fix        # oxlint --fix
 pnpm format          # oxfmt
 pnpm db:up           # start local PostgreSQL
 pnpm db:down         # stop local PostgreSQL
-pnpm swagger:check   # verify the OpenAPI document matches the code
-pnpm swagger:snapshot  # accept an intended contract change
 ```
 
 ## API documentation
@@ -103,15 +101,15 @@ status codes from the HTTP verb and `@HttpCode`. There is no `@ApiProperty` in `
 Only what has no source to be inferred from is written by hand: `@ApiTags`, `@ApiCookieAuth`
 and the error responses.
 
-Two consequences worth knowing before you touch a route:
+Two consequences worth knowing before you touch a route, because neither fails at compile
+time and nothing checks them for you:
 
-- **A controller method without a return type is documented with no response schema**, and
-  nothing warns you at compile time.
+- **A controller method without a return type is documented with no response schema.**
 - **A DTO field with a default but no `?` is documented as required.**
 
-`openapi.json` is committed and `pnpm swagger:check` diffs the served document against it,
-so a contract change has to be reviewed and accepted deliberately. lint-staged runs the check
-whenever a `*.controller.ts` or `*.dto.ts` is committed.
+After changing a controller or a DTO, read the result at `/docs`. The unit tests do not cover
+it: the swagger plugin does not fully run under ts-jest, so the document they see is not the
+one the app serves.
 
 ## Project structure
 
