@@ -1,5 +1,14 @@
 import { Type } from 'class-transformer';
-import { IsDate, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, Min } from 'class-validator';
+import {
+  IsDate,
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Min,
+} from 'class-validator';
 import { TodoStatus } from 'src/modules/todo/domain/entities/todo.entity.types';
 
 export class CreateTodoDto {
@@ -16,7 +25,7 @@ export class CreateTodoDto {
   status?: TodoStatus;
 
   @IsOptional()
-  @IsString()
+  @IsUUID()
   assigned_user_id?: string;
 
   @IsOptional()

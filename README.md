@@ -7,11 +7,11 @@ REST API for a collaborative todo application. Built with NestJS, Prisma, and Po
 ### Implemented
 - **Auth** — register, login, JWT access + refresh token rotation
 - **Todos** — full CRUD with pagination, scoped to authenticated user
+- **API docs** — Swagger UI at `/docs`, raw document at `/docs-json`
 
 ### Planned
 - **Rooms** (v0.4.0) — create a shared room (authenticated), join via slug (anonymous, read-only), todos within a room
 - **Scheduled cleanup** (v0.4.0) — expired rooms swept by a cron job
-- **API docs** — Swagger at `/api`
 
 ## Tech stack
 
@@ -22,6 +22,7 @@ REST API for a collaborative todo application. Built with NestJS, Prisma, and Po
 | Database | PostgreSQL |
 | Auth | JWT (access 15min + refresh 7d, with rotation) |
 | Validation | class-validator + class-transformer |
+| API docs | @nestjs/swagger CLI plugin (inferred from types) |
 | Lint / format | oxlint + oxfmt |
 | Testing | Jest + Supertest |
 | CI/CD | GitHub Actions |
@@ -89,6 +90,26 @@ pnpm format          # oxfmt
 pnpm db:up           # start local PostgreSQL
 pnpm db:down         # stop local PostgreSQL
 ```
+
+## API documentation
+
+The OpenAPI document is **inferred from the TypeScript**, not written by hand. The
+`@nestjs/swagger` CLI plugin derives schemas from DTO field types and their
+`class-validator` decorators, response bodies from each controller method's return type, and
+status codes from the HTTP verb and `@HttpCode`. There is no `@ApiProperty` in `src/`.
+
+Only what has no source to be inferred from is written by hand: `@ApiTags`, `@ApiCookieAuth`
+and the error responses.
+
+Two consequences worth knowing before you touch a route, because neither fails at compile
+time and nothing checks them for you:
+
+- **A controller method without a return type is documented with no response schema.**
+- **A DTO field with a default but no `?` is documented as required.**
+
+After changing a controller or a DTO, read the result at `/docs`. The unit tests do not cover
+it: the swagger plugin does not fully run under ts-jest, so the document they see is not the
+one the app serves.
 
 ## Project structure
 

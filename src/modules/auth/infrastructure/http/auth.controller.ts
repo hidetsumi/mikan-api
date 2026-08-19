@@ -1,4 +1,15 @@
-import { Body, Controller, Headers, Ip, Post, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Headers,
+  HttpCode,
+  HttpStatus,
+  Ip,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { env } from 'src/config/env';
 import { RegisterUseCase } from '../../application/use-cases/register.use-case';
@@ -9,7 +20,14 @@ import { LoginRequestDto, LoginResponseDto } from './dto/login.dto';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { CurrentUser } from './decorator/current-user.decorator';
 import type { JwtUserPayload } from '../../domain/services/token.services';
+import {
+  ApiBadRequestResponse,
+  ApiCookieAuth,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -19,6 +37,9 @@ export class AuthController {
   ) {}
 
   @Post('login')
+  @HttpCode(HttpStatus.OK)
+  @ApiUnauthorizedResponse({ description: 'Unknown email or wrong password.' })
+  @ApiBadRequestResponse({ description: 'Validation failed.' })
   async login(
     @Body() loginDto: LoginRequestDto,
     @Ip() ip_address: string,
@@ -52,6 +73,7 @@ export class AuthController {
   }
 
   @Post('register')
+  @ApiBadRequestResponse({ description: 'Validation failed, or the email is already taken.' })
   async register(@Body() registerDto: RegisterRequestDto): Promise<RegisterResponseDto> {
     const createdUser = await this.registerUseCase.execute(registerDto);
 
@@ -64,6 +86,9 @@ export class AuthController {
   }
 
   @Post('refresh')
+  @HttpCode(HttpStatus.OK)
+  @ApiCookieAuth('refresh_token')
+  @ApiUnauthorizedResponse({ description: 'Missing, expired, revoked or already-used token.' })
   @UseGuards(JwtRefreshGuard)
   async refresh(
     @CurrentUser() user: JwtUserPayload,

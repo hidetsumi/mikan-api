@@ -1,6 +1,6 @@
 export type PaginationParams = {
-  offset: number;
-  limit: number;
+  offset?: number;
+  limit?: number;
 };
 
 export type PaginationResult<T> = {
