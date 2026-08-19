@@ -30,7 +30,7 @@ import { CurrentUser } from 'src/modules/auth/infrastructure/http/decorator/curr
 import type { JwtUserPayload } from 'src/modules/auth/domain/services/token.services';
 import { UpdateTodoDto } from './dto/update.dto';
 import { FindTodoDto } from './dto/find.dto';
-import { PaginatedTodoResponseDto, TodoResponseDto } from './dto/todo-response.dto';
+import { PaginatedTodoResponseDto, TodoResponseDto } from './dto/response.dto';
 
 @ApiTags('todo')
 @ApiCookieAuth('access_token')
