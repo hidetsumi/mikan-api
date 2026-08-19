@@ -1,12 +1,17 @@
 {
+  "rootDir": "..",
+  "roots": ["<rootDir>/test"],
   "moduleFileExtensions": ["js", "json", "ts"],
-  "rootDir": ".",
   "testEnvironment": "node",
   "testRegex": ".e2e-spec.ts$",
+  "setupFiles": ["<rootDir>/test/setup-env.ts"],
   "transform": {
     "^.+\\.(t|j)s$": [
       "ts-jest",
       { "astTransformers": { "before": ["<rootDir>/test/swagger-plugin.transformer.js"] } }
     ]
+  },
+  "moduleNameMapper": {
+    "^src/(.*)$": "<rootDir>/src/$1"
   }
 }
