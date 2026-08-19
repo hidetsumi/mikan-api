@@ -7,13 +7,13 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
-    "format": "oxfmt src test",
+    "format": "oxfmt src test jest.config.ts",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "lint": "oxlint src test --max-warnings=0",
-    "lint:fix": "oxlint src test --fix",
+    "lint": "oxlint src test jest.config.ts --max-warnings=0",
+    "lint:fix": "oxlint src test jest.config.ts --fix",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -65,38 +65,6 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.7.3"
-  },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "json",
-      "ts"
-    ],
-    "rootDir": "src",
-    "setupFiles": [
-      "<rootDir>/../test/setup-env.ts"
-    ],
-    "testRegex": ".*\\.spec\\.ts$",
-    "transform": {
-      "^.+\\.(t|j)s$": [
-        "ts-jest",
-        {
-          "astTransformers": {
-            "before": [
-              "<rootDir>/../test/swagger-plugin.transformer.js"
-            ]
-          }
-        }
-      ]
-    },
-    "collectCoverageFrom": [
-      "**/*.(t|j)s"
-    ],
-    "coverageDirectory": "../coverage",
-    "testEnvironment": "node",
-    "moduleNameMapper": {
-      "^src/(.*)$": "<rootDir>/$1"
-    }
   },
   "lint-staged": {
     "*.{ts,js}": [

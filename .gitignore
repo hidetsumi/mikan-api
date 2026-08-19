@@ -34,3 +34,6 @@ pnpm-debug.log*
 AGENTS.md
 CLAUDE.md
 docs/
+
+# Coverage
+coverage/
