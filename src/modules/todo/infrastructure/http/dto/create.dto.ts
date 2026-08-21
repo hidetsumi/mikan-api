@@ -11,7 +11,7 @@ import {
 } from 'class-validator';
 import { TodoStatus } from 'src/modules/todo/domain/entities/todo.entity.types';
 
-export class CreateTodoDto {
+export class CreateTodoRequestDto {
   @IsString()
   @IsNotEmpty()
   title: string;

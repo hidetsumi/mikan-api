@@ -24,12 +24,12 @@ import { FindAllUseCase } from '../../application/use-cases/find-all.use-case';
 import { FindByIdUseCase } from '../../application/use-cases/find-by-id.use-case';
 import { UpdateUseCase } from '../../application/use-cases/update.use-case';
 import { DeleteUseCase } from '../../application/use-cases/delete.use-case';
-import { CreateTodoDto } from './dto/create.dto';
+import { CreateTodoRequestDto } from './dto/create.dto';
 import { JwtAuthGuard } from 'src/modules/auth/infrastructure/http/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/modules/auth/infrastructure/http/decorator/current-user.decorator';
 import type { JwtUserPayload } from 'src/modules/auth/domain/services/token.services';
-import { UpdateTodoDto } from './dto/update.dto';
-import { FindTodoDto } from './dto/find.dto';
+import { UpdateTodoRequestDto } from './dto/update.dto';
+import { FindTodoRequestDto } from './dto/find.dto';
 import { PaginatedTodoResponseDto, TodoResponseDto } from './dto/response.dto';
 
 @ApiTags('todo')
@@ -49,7 +49,7 @@ export class TodoController {
   @Get()
   @ApiBadRequestResponse({ description: 'Validation failed.' })
   async findAll(
-    @Query() findTodoDto: FindTodoDto,
+    @Query() findTodoDto: FindTodoRequestDto,
     @CurrentUser() user: JwtUserPayload,
   ): Promise<PaginatedTodoResponseDto> {
     return this.findAllUseCase.execute({
@@ -61,7 +61,7 @@ export class TodoController {
   @Post()
   @ApiBadRequestResponse({ description: 'Validation failed.' })
   async create(
-    @Body() createTodoDto: CreateTodoDto,
+    @Body() createTodoDto: CreateTodoRequestDto,
     @CurrentUser() user: JwtUserPayload,
   ): Promise<TodoResponseDto> {
     return this.createUseCase.execute({
@@ -75,7 +75,7 @@ export class TodoController {
   @ApiBadRequestResponse({ description: 'Validation failed, or the id is not a valid UUID.' })
   async update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateTodoDto: UpdateTodoDto,
+    @Body() updateTodoDto: UpdateTodoRequestDto,
     @CurrentUser() user: JwtUserPayload,
   ): Promise<TodoResponseDto> {
     return this.updateUseCase.execute({

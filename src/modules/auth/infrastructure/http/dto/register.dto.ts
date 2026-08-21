@@ -16,10 +16,3 @@ export class RegisterRequestDto {
   @MinLength(2)
   last_name: string;
 }
-
-export class RegisterResponseDto {
-  id: string;
-  email: string;
-  name: string;
-  last_name: string;
-}

@@ -2,11 +2,11 @@ import 'reflect-metadata';
 import { plainToInstance } from 'class-transformer';
 import { validateSync } from 'class-validator';
 import { TodoStatus } from '@prisma/client';
-import { FindTodoDto } from './find.dto';
+import { FindTodoRequestDto } from './find.dto';
 
-describe('FindTodoDto', () => {
+describe('FindTodoRequestDto', () => {
   const transform = (query: Record<string, unknown>) =>
-    plainToInstance(FindTodoDto, query, { enableImplicitConversion: false });
+    plainToInstance(FindTodoRequestDto, query, { enableImplicitConversion: false });
 
   it('coerces numeric query strings into numbers', () => {
     const dto = transform({ offset: '10', limit: '5' });
