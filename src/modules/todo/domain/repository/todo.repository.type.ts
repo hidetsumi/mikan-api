@@ -7,6 +7,7 @@ export type FindTodoParams = PaginationParams & {
 
 export type CreateTodoInput = {
   title: string;
+  completed_at?: Date | null;
   description?: string;
   owner_user_id?: string;
   status?: TodoStatus;
@@ -18,6 +19,7 @@ export type CreateTodoInput = {
 
 export type UpdateTodoInput = {
   title?: string;
+  completed_at?: Date | null;
   description?: string;
   status?: TodoStatus;
   assigned_user_id?: string;

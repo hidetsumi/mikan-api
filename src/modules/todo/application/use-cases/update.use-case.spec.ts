@@ -83,5 +83,84 @@ describe('UpdateUseCase', () => {
       expect(repository.update).toHaveBeenCalledWith(baseInput);
       expect(result).toBe(updated);
     });
+
+    it('leaves completed_at untouched when the update does not carry a status', async () => {
+      repository.findById.mockResolvedValue(makeTodo());
+      repository.update.mockResolvedValue(makeTodo());
+
+      await useCase.execute({ ...baseInput, owner_user_id: 'user-1' });
+
+      expect(repository.update.mock.calls[0][0]).not.toHaveProperty('completed_at');
+    });
+  });
+
+  describe('completed_at upkeep', () => {
+    it('stamps completed_at when the status moves to COMPLETED', async () => {
+      repository.findById.mockResolvedValue(makeTodo());
+      repository.update.mockResolvedValue(makeTodo());
+
+      await useCase.execute({
+        id: 'todo-1',
+        owner_user_id: 'user-1',
+        status: TodoStatus.COMPLETED,
+      });
+
+      expect(repository.update.mock.calls[0][0].completed_at).toBeInstanceOf(Date);
+    });
+
+    it('clears completed_at when the status leaves COMPLETED', async () => {
+      const completed = makeTodo({
+        status: TodoStatus.COMPLETED,
+        completed_at: new Date('2026-02-02T00:00:00.000Z'),
+      });
+      repository.findById.mockResolvedValue(completed);
+      repository.update.mockResolvedValue(completed);
+
+      await useCase.execute({
+        id: 'todo-1',
+        owner_user_id: 'user-1',
+        status: TodoStatus.IN_PROGRESS,
+      });
+
+      expect(repository.update.mock.calls[0][0].completed_at).toBeNull();
+    });
+
+    it('clears completed_at for every status outside COMPLETED_STATUSES', async () => {
+      for (const status of [
+        TodoStatus.PENDING,
+        TodoStatus.IN_PROGRESS,
+        TodoStatus.ON_HOLD,
+        TodoStatus.CANCELLED,
+      ]) {
+        repository.update.mockClear();
+        repository.findById.mockResolvedValue(
+          makeTodo({
+            status: TodoStatus.COMPLETED,
+            completed_at: new Date('2026-02-02T00:00:00.000Z'),
+          }),
+        );
+        repository.update.mockResolvedValue(makeTodo());
+
+        await useCase.execute({ id: 'todo-1', owner_user_id: 'user-1', status });
+
+        expect(repository.update.mock.calls[0][0].completed_at).toBeNull();
+      }
+    });
+
+    it('keeps the original timestamp when an already-completed todo is set to COMPLETED again', async () => {
+      const stamped = new Date('2026-02-02T00:00:00.000Z');
+      repository.findById.mockResolvedValue(
+        makeTodo({ status: TodoStatus.COMPLETED, completed_at: stamped }),
+      );
+      repository.update.mockResolvedValue(makeTodo());
+
+      await useCase.execute({
+        id: 'todo-1',
+        owner_user_id: 'user-1',
+        status: TodoStatus.COMPLETED,
+      });
+
+      expect(repository.update.mock.calls[0][0].completed_at).toBe(stamped);
+    });
   });
 });

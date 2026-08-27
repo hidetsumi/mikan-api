@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { TodoRepository } from '../../domain/repository/todo.repository';
 import { UpdateTodoInput } from '../../domain/repository/todo.repository.type';
+import { COMPLETED_STATUSES } from '../../domain/entities/todo.entity.types';
 
 type UpdateInput = UpdateTodoInput & {
   owner_user_id: string;
@@ -15,6 +16,13 @@ export class UpdateUseCase {
 
     if (!todo) throw new NotFoundException('Todo not found');
 
-    return await this.todoRepository.update(input);
+    if (input.status === undefined) return await this.todoRepository.update(input);
+
+    return await this.todoRepository.update({
+      ...input,
+      completed_at: COMPLETED_STATUSES.includes(input.status)
+        ? (todo.completed_at ?? new Date())
+        : null,
+    });
   }
 }

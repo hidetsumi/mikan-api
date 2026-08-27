@@ -34,6 +34,7 @@ export class PrismaTodoRepository implements TodoRepository {
         owner_guest_id: todo.owner_guest_id,
         assigned_user_id: todo.assigned_user_id,
         due_at: todo.due_at,
+        completed_at: todo.completed_at,
       },
     });
 
