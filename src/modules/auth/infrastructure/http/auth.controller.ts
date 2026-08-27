@@ -15,8 +15,9 @@ import { env } from 'src/config/env';
 import { RegisterUseCase } from '../../application/use-cases/register.use-case';
 import { LoginUseCase } from '../../application/use-cases/login.use-case';
 import { RefreshTokenUseCase } from '../../application/use-cases/refresh-token.use-case';
-import { RegisterRequestDto, RegisterResponseDto } from './dto/register.dto';
-import { LoginRequestDto, LoginResponseDto } from './dto/login.dto';
+import { RegisterRequestDto } from './dto/register.dto';
+import { UserResponseDto } from 'src/modules/users/infrastructure/http/dto/response.dto';
+import { LoginRequestDto } from './dto/login.dto';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { CurrentUser } from './decorator/current-user.decorator';
 import type { JwtUserPayload } from '../../domain/services/token.services';
@@ -45,7 +46,7 @@ export class AuthController {
     @Ip() ip_address: string,
     @Headers('user-agent') user_agent: string,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<LoginResponseDto> {
+  ): Promise<UserResponseDto> {
     const result = await this.loginUseCase.execute({
       email: loginDto.email,
       password: loginDto.password,
@@ -74,7 +75,7 @@ export class AuthController {
 
   @Post('register')
   @ApiBadRequestResponse({ description: 'Validation failed, or the email is already taken.' })
-  async register(@Body() registerDto: RegisterRequestDto): Promise<RegisterResponseDto> {
+  async register(@Body() registerDto: RegisterRequestDto): Promise<UserResponseDto> {
     const createdUser = await this.registerUseCase.execute(registerDto);
 
     return {

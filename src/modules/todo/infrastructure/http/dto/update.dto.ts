@@ -2,7 +2,7 @@ import { Type } from 'class-transformer';
 import { IsDate, IsEnum, IsInt, IsOptional, IsString, IsUUID, Min } from 'class-validator';
 import { TodoStatus } from 'src/modules/todo/domain/entities/todo.entity.types';
 
-export class UpdateTodoDto {
+export class UpdateTodoRequestDto {
   @IsOptional()
   @IsString()
   title?: string;
