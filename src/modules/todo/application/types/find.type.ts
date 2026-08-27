@@ -1,7 +1,5 @@
-import { PaginationParams } from 'src/shared/domain/pagination';
-import { TodoStatus } from '../../domain/entities/todo.entity.types';
+import { FindTodoParams } from '../../domain/repository/todo.repository.type';
 
-export type FindTodoInput = PaginationParams & {
-  owner_user_id?: string;
-  status?: TodoStatus;
+export type FindTodoInput = FindTodoParams & {
+  owner_user_id: string;
 };

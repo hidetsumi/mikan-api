@@ -1,4 +1,9 @@
+import { PaginationParams } from 'src/shared/domain/pagination';
 import { TodoStatus } from '../entities/todo.entity.types';
+
+export type FindTodoParams = PaginationParams & {
+  status?: TodoStatus;
+};
 
 export type CreateTodoInput = {
   title: string;
