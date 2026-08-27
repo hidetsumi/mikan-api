@@ -34,7 +34,7 @@ describe('FindAllUseCase', () => {
     useCase = new FindAllUseCase(repository as unknown as TodoRepository);
   });
 
-  it('scopes the listing to the owner and forwards only the pagination params', async () => {
+  it('scopes the listing to the owner and forwards the pagination params', async () => {
     const paginated: PaginationResult<Todo[]> = { data: [makeTodo()], total: 1 };
     repository.findAllByOwnerUserId.mockResolvedValue(paginated);
 
@@ -46,6 +46,34 @@ describe('FindAllUseCase', () => {
       limit: 10,
     });
     expect(result).toBe(paginated);
+  });
+
+  it('forwards the status filter when one is given', async () => {
+    repository.findAllByOwnerUserId.mockResolvedValue({ data: [], total: 0 });
+
+    await useCase.execute({
+      offset: 0,
+      limit: 10,
+      owner_user_id: 'user-1',
+      status: TodoStatus.COMPLETED,
+    });
+
+    expect(repository.findAllByOwnerUserId).toHaveBeenCalledWith('user-1', {
+      offset: 0,
+      limit: 10,
+      status: TodoStatus.COMPLETED,
+    });
+  });
+
+  it('omits the status filter when none is given', async () => {
+    repository.findAllByOwnerUserId.mockResolvedValue({ data: [], total: 0 });
+
+    await useCase.execute({ offset: 0, limit: 10, owner_user_id: 'user-1' });
+
+    expect(repository.findAllByOwnerUserId).toHaveBeenCalledWith(
+      'user-1',
+      expect.not.objectContaining({ status: expect.anything() }),
+    );
   });
 
   it('never queries without an owner', async () => {

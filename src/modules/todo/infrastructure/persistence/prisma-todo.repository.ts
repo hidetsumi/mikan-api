@@ -1,8 +1,12 @@
 import { PrismaService } from 'src/shared/infrastructure/prisma/prisma.service';
 import { TodoRepository } from '../../domain/repository/todo.repository';
 import { Todo } from '../../domain/entities/todo.entity';
-import { CreateTodoInput, UpdateTodoInput } from '../../domain/repository/todo.repository.type';
-import { PaginationParams, PaginationResult } from 'src/shared/domain/pagination';
+import {
+  CreateTodoInput,
+  FindTodoParams,
+  UpdateTodoInput,
+} from '../../domain/repository/todo.repository.type';
+import { PaginationResult } from 'src/shared/domain/pagination';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
@@ -42,21 +46,17 @@ export class PrismaTodoRepository implements TodoRepository {
 
   async findAllByAssignedUserId(
     assigned_user_id: string,
-    { limit, offset }: PaginationParams,
+    { limit, offset, status }: FindTodoParams,
   ): Promise<PaginationResult<Todo[]>> {
+    const where = { assigned_user_id, ...(status && { status }) };
+
     const [todos, total] = await this.prismaService.$transaction([
       this.prismaService.todo.findMany({
-        where: {
-          assigned_user_id,
-        },
+        where,
         skip: offset,
         take: limit,
       }),
-      this.prismaService.todo.count({
-        where: {
-          assigned_user_id,
-        },
-      }),
+      this.prismaService.todo.count({ where }),
     ]);
 
     return {
@@ -67,22 +67,18 @@ export class PrismaTodoRepository implements TodoRepository {
 
   async findAllByOwnerUserId(
     owner_user_id: string,
-    { limit, offset }: PaginationParams,
+    { limit, offset, status }: FindTodoParams,
   ): Promise<PaginationResult<Todo[]>> {
+    const where = { owner_user_id, ...(status && { status }) };
+
     const [todos, total] = await this.prismaService.$transaction([
       this.prismaService.todo.findMany({
-        where: {
-          owner_user_id,
-        },
+        where,
         orderBy: { created_at: 'desc' },
         skip: offset,
         take: limit,
       }),
-      this.prismaService.todo.count({
-        where: {
-          owner_user_id,
-        },
-      }),
+      this.prismaService.todo.count({ where }),
     ]);
 
     return {
