@@ -6,6 +6,8 @@ export const TodoStatus = {
   CANCELLED: 'CANCELLED',
 } as const;
 
+export const COMPLETED_STATUSES: TodoStatus[] = [TodoStatus.COMPLETED];
+
 export type TodoProps = {
   id: string;
   title: string;

@@ -3,6 +3,7 @@ import { CreateUseCase } from './create.use-case';
 import { TodoRepository } from '../../domain/repository/todo.repository';
 import { CreateTodoInput } from '../types/create.type';
 import { Todo } from '../../domain/entities/todo.entity';
+import { TodoStatus } from '../../domain/entities/todo.entity.types';
 
 describe('CreateUseCase', () => {
   let useCase: CreateUseCase;
@@ -75,6 +76,35 @@ describe('CreateUseCase', () => {
     it('preserves an explicit priority of 0 (?? must not clobber it)', async () => {
       await useCase.execute({ ...baseInput, priority: 0 });
       expect(repository.create).toHaveBeenCalledWith(expect.objectContaining({ priority: 0 }));
+    });
+  });
+
+  describe('completed_at', () => {
+    it('stamps completed_at when the todo is created as COMPLETED', async () => {
+      await useCase.execute({ ...baseInput, status: TodoStatus.COMPLETED });
+
+      expect(repository.create.mock.calls[0][0].completed_at).toBeInstanceOf(Date);
+    });
+
+    it('leaves completed_at null for any other status', async () => {
+      for (const status of [
+        TodoStatus.PENDING,
+        TodoStatus.IN_PROGRESS,
+        TodoStatus.ON_HOLD,
+        TodoStatus.CANCELLED,
+      ]) {
+        repository.create.mockClear();
+
+        await useCase.execute({ ...baseInput, status });
+
+        expect(repository.create.mock.calls[0][0].completed_at).toBeNull();
+      }
+    });
+
+    it('leaves completed_at null when no status is given', async () => {
+      await useCase.execute(baseInput);
+
+      expect(repository.create.mock.calls[0][0].completed_at).toBeNull();
     });
   });
 
