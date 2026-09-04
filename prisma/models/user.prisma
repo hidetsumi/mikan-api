@@ -18,6 +18,7 @@ model User {
   refresh_token  RefreshToken[]
   owned_todos    Todo[]         @relation("TodoOwner")
   assigned_todos Todo[]         @relation("TodoAssignedTo")
+  owned_rooms    Room[]
 
   @@map("user")
 }

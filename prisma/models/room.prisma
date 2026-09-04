@@ -1,0 +1,43 @@
+enum RoomVisibility {
+  PUBLIC
+  PRIVATE
+
+  @@map("room_visibility")
+}
+
+enum RoomAccessMode {
+  ANONYMOUS
+  AUTHENTICATED_ONLY
+
+  @@map("room_access_mode")
+}
+
+enum RoomStatus {
+  ACTIVE
+  ARCHIVED
+  EXPIRED
+
+  @@map("room_status")
+}
+
+model Room {
+  id               String         @id @default(uuid())
+  owner_user_id    String
+  slug             String         @unique
+  name             String
+  description      String?
+  visibility       RoomVisibility @default(PUBLIC)
+  access_mode      RoomAccessMode @default(ANONYMOUS)
+  status           RoomStatus     @default(ACTIVE)
+  expires_at       DateTime?
+  last_activity_at DateTime?
+  created_at       DateTime       @default(now())
+  updated_at       DateTime       @updatedAt
+
+  owner User @relation(fields: [owner_user_id], references: [id], onDelete: Cascade)
+
+  @@index([owner_user_id])
+  @@index([status])
+  @@index([expires_at])
+  @@map("room")
+}
