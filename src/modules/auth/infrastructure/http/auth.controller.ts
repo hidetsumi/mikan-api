@@ -11,7 +11,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
-import { env } from 'src/config/env';
+import {
+  IS_PRODUCTION,
+  JWT_ACCESS_EXPIRES_IN_SECONDS,
+  JWT_REFRESH_EXPIRES_IN_SECONDS,
+} from 'src/config/const';
 import { RegisterUseCase } from '../../application/use-cases/register.use-case';
 import { LoginUseCase } from '../../application/use-cases/login.use-case';
 import { RefreshTokenUseCase } from '../../application/use-cases/refresh-token.use-case';
@@ -54,20 +58,18 @@ export class AuthController {
       user_agent,
     });
 
-    const isProduction = env.NODE_ENV === 'production';
-
     res.cookie('access_token', result.access_token, {
       httpOnly: true,
-      secure: isProduction,
+      secure: IS_PRODUCTION,
       sameSite: 'strict',
-      maxAge: env.JWT_ACCESS_EXPIRES_IN * 1000,
+      maxAge: JWT_ACCESS_EXPIRES_IN_SECONDS * 1000,
     });
 
     res.cookie('refresh_token', result.refresh_token, {
       httpOnly: true,
-      secure: isProduction,
+      secure: IS_PRODUCTION,
       sameSite: 'strict',
-      maxAge: env.JWT_REFRESH_EXPIRES_IN * 1000,
+      maxAge: JWT_REFRESH_EXPIRES_IN_SECONDS * 1000,
     });
 
     return result.user;
@@ -106,20 +108,18 @@ export class AuthController {
       user_agent,
     });
 
-    const isProduction = env.NODE_ENV === 'production';
-
     res.cookie('access_token', result.access_token, {
       httpOnly: true,
-      secure: isProduction,
+      secure: IS_PRODUCTION,
       sameSite: 'strict',
-      maxAge: env.JWT_ACCESS_EXPIRES_IN * 1000,
+      maxAge: JWT_ACCESS_EXPIRES_IN_SECONDS * 1000,
     });
 
     res.cookie('refresh_token', result.refresh_token, {
       httpOnly: true,
-      secure: isProduction,
+      secure: IS_PRODUCTION,
       sameSite: 'strict',
-      maxAge: env.JWT_REFRESH_EXPIRES_IN * 1000,
+      maxAge: JWT_REFRESH_EXPIRES_IN_SECONDS * 1000,
     });
   }
 }

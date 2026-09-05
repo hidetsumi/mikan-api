@@ -11,7 +11,7 @@ import { JwtRefreshStrategy } from './infrastructure/strategies/jwt-refresh.stra
 import { PrismaAuthRepository } from './infrastructure/persistence/prisma-auth.repository';
 import { AuthRepository } from './domain/repository/auth.repository';
 import { PrismaModule } from 'src/shared/infrastructure/prisma/prisma.module';
-import { env } from 'src/config/env';
+import { JWT_ACCESS_EXPIRES_IN_SECONDS, JWT_ACCESS_SECRET } from 'src/config/const';
 
 @Module({
   controllers: [AuthController],
@@ -27,8 +27,8 @@ import { env } from 'src/config/env';
     PrismaModule,
     PassportModule,
     JwtModule.register({
-      secret: env.JWT_ACCESS_SECRET,
-      signOptions: { expiresIn: env.JWT_ACCESS_EXPIRES_IN },
+      secret: JWT_ACCESS_SECRET,
+      signOptions: { expiresIn: JWT_ACCESS_EXPIRES_IN_SECONDS },
     }),
   ],
 })

@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import { env } from './config/env';
+import { PORT } from './config/const';
 import cookieParser from 'cookie-parser';
 import { setupSwagger } from './config/swagger';
 
@@ -18,6 +18,6 @@ async function bootstrap() {
   );
   setupSwagger(app);
 
-  await app.listen(env.PORT);
+  await app.listen(PORT);
 }
 void bootstrap();

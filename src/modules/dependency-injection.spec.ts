@@ -1,13 +1,11 @@
 // Building the graph instantiates JwtStrategy and PrismaService, both of which
 // refuse to construct without config. Stub the values here rather than relying
 // on a .env file, which CI does not have.
-jest.mock('src/config/env', () => ({
-  env: {
-    ...jest.requireActual('src/config/env').env,
-    DATABASE_URL: 'postgresql://test:test@localhost:5432/test',
-    JWT_ACCESS_SECRET: 'test-access-secret',
-    JWT_REFRESH_SECRET: 'test-refresh-secret',
-  },
+jest.mock('src/config/const', () => ({
+  ...jest.requireActual('src/config/const'),
+  DATABASE_URL: 'postgresql://test:test@localhost:5432/test',
+  JWT_ACCESS_SECRET: 'test-access-secret',
+  JWT_REFRESH_SECRET: 'test-refresh-secret',
 }));
 
 import { Test } from '@nestjs/testing';
