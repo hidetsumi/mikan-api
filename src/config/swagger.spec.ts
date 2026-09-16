@@ -34,9 +34,17 @@ describe('OpenAPI document', () => {
     expect(document.info.title).toBe('Mikan API');
   });
 
-  it('documents every auth and todo route', () => {
+  it('documents every auth, todo and room route', () => {
     expect(Object.keys(document.paths).sort()).toEqual(
-      ['/', '/auth/login', '/auth/refresh', '/auth/register', '/todo', '/todo/{id}'].sort(),
+      [
+        '/',
+        '/auth/login',
+        '/auth/refresh',
+        '/auth/register',
+        '/room',
+        '/todo',
+        '/todo/{id}',
+      ].sort(),
     );
   });
 
