@@ -8,3 +8,5 @@ export const IS_PRODUCTION = NODE_ENV === 'production';
 
 export const JWT_ACCESS_EXPIRES_IN_SECONDS = 900;
 export const JWT_REFRESH_EXPIRES_IN_SECONDS = 604800;
+
+export const ROOM_LIFETIME_MS = 7 * 24 * 60 * 60 * 1000;
