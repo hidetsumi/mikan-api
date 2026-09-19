@@ -10,7 +10,7 @@ REST API for a collaborative todo application. Built with NestJS, Prisma, and Po
 - **API docs** — Swagger UI at `/docs`, raw document at `/docs-json`
 
 ### Planned
-- **Rooms** (v0.4.0) — create a shared room (authenticated), join via slug (anonymous, read-only), todos within a room
+- **Rooms** (v0.4.0) — create a shared room (authenticated), then anyone holding the link reads and writes its todos, no account needed
 - **Scheduled cleanup** (v0.4.0) — expired rooms swept by a cron job
 
 ## Tech stack
